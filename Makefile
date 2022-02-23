@@ -1,4 +1,7 @@
 .DEFAULT_GOAL = build
+.PHONY: FORCE
+.DELETE_ON_ERROR:
+.SECONDARY:
 
 tools/ko = tools/bin/ko
 tools/bin/%: tools/src/%/go.mod tools/src/%/pin.go
@@ -7,3 +10,14 @@ tools/bin/%: tools/src/%/go.mod tools/src/%/pin.go
 build: $(tools/ko)
 	$(tools/ko) build --local .
 .PHONY: build
+
+push: $(tools/ko)
+	$(tools/ko) build .
+.PHONY: push
+
+speedtest.yaml: speedtest.in.yaml $(tools/ko)
+	$(tools/ko) resolve --filename=$< > $@
+
+apply: speedtest.in.yaml $(tools/ko)
+	$(tools/ko) apply --filename=$<
+.PHONY: apply

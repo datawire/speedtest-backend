@@ -1,0 +1,37 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: speedtest
+spec:
+  ports:
+  - name: http
+    port: 80
+    targetPort: http
+  selector:
+    app.kubernetes.io/instance: datawire-speedtest-backend
+    app.kubernetes.io/name: datawire-speedtest-backend
+  type: NodePort
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: speedtest
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: datawire-speedtest-backend
+      app.kubernetes.io/name: datawire-speedtest-backend
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/instance: datawire-speedtest-backend
+        app.kubernetes.io/name: datawire-speedtest-backend
+    spec:
+      containers:
+      - name: speedtest
+        image: ko://github.com/datawire/speedtest-backend
+        ports:
+        - containerPort: 8080
+          name: http
