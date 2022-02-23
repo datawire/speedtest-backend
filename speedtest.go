@@ -23,8 +23,11 @@ func main() {
 
 func Main(ctx context.Context) error {
 	sc := &dhttp.ServerConfig{
-		Handler: http.HandlerFunc(func(w http.ResponseWriter, _ *http.Request) {
-			_, _ = io.Copy(w, rand.Reader)
+		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			ctx := dlog.WithField(r.Context(), "request_id", fmt.Sprintf("%p", r))
+			dlog.Infof(ctx, "begin: %s %s %s", r.Method, r.RequestURI, r.Proto)
+			n, _ := io.Copy(w, rand.Reader)
+			dlog.Infof(ctx, "end: wrote %d bytes", n)
 		}),
 	}
 
