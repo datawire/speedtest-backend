@@ -15,7 +15,7 @@ push: $(tools/ko)
 	$(tools/ko) build .
 .PHONY: push
 
-speedtest.yaml: speedtest.in.yaml $(tools/ko)
+speedtest.yaml: speedtest.in.yaml $(tools/ko) FORCE
 	$(tools/ko) resolve --filename=$< > $@
 
 apply: speedtest.in.yaml $(tools/ko)
