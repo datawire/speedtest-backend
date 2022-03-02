@@ -46,7 +46,9 @@ func Main(ctx context.Context) error {
 
 	sc := &dhttp.ServerConfig{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-			ctx := dlog.WithField(r.Context(), "request_id", fmt.Sprintf("%p", r))
+			var requestID [8]byte
+			_, _ = rand.Read(requestID[:])
+			ctx := dlog.WithField(r.Context(), "request_id", fmt.Sprintf("%0x", requestID))
 
 			dataSource := io.Reader(asciiReader{rand.Reader})
 			if size, err := strconv.ParseInt(r.URL.Query().Get("size"), 10, 0); err == nil && size > 0 {
