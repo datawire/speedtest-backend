@@ -46,6 +46,11 @@ func Main(ctx context.Context) error {
 
 	sc := &dhttp.ServerConfig{
 		Handler: http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			if r.URL.Path == "/favicon.ico" {
+				http.NotFound(w, r)
+				return
+			}
+
 			var requestID [8]byte
 			_, _ = rand.Read(requestID[:])
 			ctx := dlog.WithField(r.Context(), "request_id", fmt.Sprintf("%0x", requestID))
